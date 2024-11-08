@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <!-- Sección de información del usuario -->
+  <div class="row mt-4">
+    <div class="col-md-3 text-center">
+      <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="rounded-circle" width="150" height="150">
+    </div>
+    <div class="col-md-9">
+      <h2>{{ user.username }}</h2>
+      <p>{{ user.bio }}</p>
+      <div class="d-flex">
+        <span class="me-3"><strong>{{ posts.count }}</strong> publicaciones</span>
+        <span class="me-3"><strong>{{ user.followers.count }}</strong> seguidores</span>
+        <span><strong>{{ user.following.count }}</strong> siguiendo</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sección de publicaciones -->
+  <hr>
+  <div class="row">
+    {% for post in posts %}
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <a href="{% url 'post_detail' post.id %}">
+          <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.caption }}">
+        </a>
+        <div class="card-body">
+          <p class="card-text">{{ post.caption|truncatewords:10 }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

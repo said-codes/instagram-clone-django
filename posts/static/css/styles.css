@@ -1,0 +1,26 @@
+/* static/css/styles.css */
+body {
+    font-family: 'Helvetica Neue', sans-serif;
+    background-color: #fafafa;
+}
+
+.navbar {
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+}
+
+.card-img-top {
+    max-height: 500px;
+    object-fit: cover;
+}
+
+footer {
+    text-align: center;
+    padding: 20px 0;
+    background-color: #f8f9fa;
+}

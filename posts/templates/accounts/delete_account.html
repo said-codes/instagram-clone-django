@@ -1,0 +1,14 @@
+<!-- posts/templates/posts/delete_account.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>¿Estás seguro de que deseas eliminar tu cuenta?</h2>
+  <p>Esta acción es irreversible.</p>
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirmar eliminación</button>
+    <a href="{% url 'profile_settings' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

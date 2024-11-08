@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <!-- Título de la página -->
+  <div class="row mb-4">
+    <div class="col-12 text-center">
+      <h2>Configuración del Perfil</h2>
+    </div>
+  </div>
+
+  <!-- Formulario de configuración del perfil -->
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <form method="POST" enctype="multipart/form-data" class="bg-white p-4 rounded shadow-sm">
+        {% csrf_token %}
+        
+        <!-- Información del Usuario -->
+        <div class="mb-4">
+          <h5 class="text-muted">Información del Usuario</h5>
+          <div class="card p-3">
+            <div class="form-group">
+              {{ user_form.as_p }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Información del Perfil -->
+        <div class="mb-4">
+          <h5 class="text-muted">Información del Perfil</h5>
+          <div class="card p-3">
+            <div class="form-group">
+              {{ profile_form.as_p }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Botón de guardar -->
+        <button type="submit" class="btn btn-primary w-100 mb-4">Guardar Cambios</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Separador -->
+  <hr class="my-5">
+
+  <!-- Sección de eliminar cuenta -->
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <h4 class="text-center text-danger">Eliminar Cuenta</h4>
+      <p class="text-center">Si eliminas tu cuenta, no podrás recuperar tus datos.</p>
+      <form action="{% url 'delete_account' %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100">Eliminar mi cuenta</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

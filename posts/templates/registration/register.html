@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <!-- Logo de Instagram -->
+        <div class="text-center mb-4">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg" alt="Instagram" class="img-fluid" style="max-width: 150px;">
+        </div>
+
+        <h3 class="text-center">Sign Up</h3>
+
+        <!-- Formulario de registro -->
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="id_username" class="form-label">Username</label>
+            {{ form.username|add_class:"form-control" }}
+          </div>
+
+          <div class="mb-3">
+            <label for="id_password1" class="form-label">Password</label>
+            {{ form.password1|add_class:"form-control" }}
+          </div>
+
+          <div class="mb-3">
+            <label for="id_password2" class="form-label">Confirm Password</label>
+            {{ form.password2|add_class:"form-control" }}
+          </div>
+
+          <div class="mb-3 text-center">
+            <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+          </div>
+
+          {% if messages %}
+            <div class="alert alert-danger">
+              {% for message in messages %}
+                <p>{{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </form>
+
+        <div class="text-center mt-3">
+          <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

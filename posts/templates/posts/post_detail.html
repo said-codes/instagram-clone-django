@@ -1,0 +1,31 @@
+<!-- posts/post_detail.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card mb-3">
+        <div class="card-header d-flex align-items-center">
+          <img src="{{ post.user.avatar.url }}" alt="Avatar de {{ post.user.username }}" class="rounded-circle" width="40" height="40">
+          <strong class="ms-2">{{ post.user.username }}</strong>
+        </div>
+        
+        {% if post.image %}
+          <img src="{{ post.image.url }}" class="card-img-top" alt="Imagen de la publicación">
+        {% endif %}
+        
+        <div class="card-body">
+          <p class="card-text">{{ post.caption }}</p>
+          <p><strong>{{ post.like_count }} Me gusta</strong></p>
+          <a href="{% url 'like_post' post.id %}" class="btn btn-outline-primary">Me gusta</a>
+          <a href="{% url 'unlike_post' post.id %}" class="btn btn-outline-danger">Quitar me gusta</a>
+        </div>
+        <div class="card-footer text-muted">
+          Publicado el {{ post.created_at|date:"d M Y H:i" }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
