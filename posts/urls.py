@@ -20,6 +20,10 @@ urlpatterns = [
     path('follow/<int:user_id>/', views.follow_user, name='follow_user'),
     path('unfollow/<int:user_id>/', views.unfollow_user, name='unfollow_user'),
     path('post/<int:post_id>/comment/', views.add_comment, name='add_comment'),
+    path('post/<int:post_id>/comment/<int:comment_id>/edit/', views.edit_comment, name='edit_comment'),
+    path('comment/delete/<int:comment_id>/', views.delete_comment, name='delete_comment'),
+    path('stories/upload/', views.upload_story, name='upload_story'),
+    path('stories/', views.view_stories, name='view_stories'),
 ]
 
 

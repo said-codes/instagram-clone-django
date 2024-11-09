@@ -57,6 +57,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # URL pública para acceder a los archivos estáticos
 STATIC_URL = '/static/'
 
+LOGOUT_REDIRECT_URL = 'home'  # Redirige a la vista 'login' después de cerrar sesión
 
 INSTALLED_APPS = [
     'posts',

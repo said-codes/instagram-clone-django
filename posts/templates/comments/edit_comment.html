@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">Editar Comentario</h5>
+      <form action="{% url 'edit_comment' post.id comment.id %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+          <textarea name="content" class="form-control" rows="4" placeholder="Escribe tu comentario...">{{ comment.content }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-instagram w-100">Guardar cambios</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

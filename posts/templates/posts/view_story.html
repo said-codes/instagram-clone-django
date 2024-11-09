@@ -1,0 +1,45 @@
+<!-- Incluir la librería Swiper -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+{% block content %}
+  <div class="swiper-container">
+    <div class="swiper-wrapper">
+      {% for story in stories %}
+        <div class="swiper-slide">
+          <div class="story-card">
+            {% if story.image %}
+              <img src="{{ story.image.url }}" class="story-image" alt="Historia de {{ story.user.username }}">
+            {% elif story.video %}
+              <video class="story-image" controls>
+                <source src="{{ story.video.url }}" type="video/mp4">
+                Tu navegador no soporta este formato de video.
+              </video>
+            {% endif %}
+            <div class="story-info">
+              <p class="username">{{ story.user.username }}</p>
+              <p class="caption">{{ story.caption }}</p>
+              <p class="story-time">Publicado el {{ story.created_at|date:"d M Y H:i" }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+
+  <script>
+    var swiper = new Swiper('.swiper-container', {
+      slidesPerView: 1,
+      spaceBetween: 10,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+    });
+  </script>
+{% endblock %}

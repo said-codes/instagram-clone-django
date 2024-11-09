@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from posts import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,8 +28,8 @@ urlpatterns = [
     
     # Rutas para login y logout
     path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/',  views.signout, name='logout'),
     
-    path('accounts/', include('django.contrib.auth.urls')),  # Esto maneja las rutas de autenticación
+    #path('accounts/', include('django.contrib.auth.urls')),  # Esto maneja las rutas de autenticación
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

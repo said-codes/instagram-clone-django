@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
@@ -12,6 +12,9 @@ from .forms import ProfileForm
 from .models import Profile
 from .models import Comment
 from .forms import CommentForm
+from .forms import StoryForm
+from .models import Story
+from django.utils import timezone
 
 
 @login_required
@@ -19,7 +22,14 @@ def home(request):
     followed_users = Follow.objects.filter(
         follower=request.user).values_list('followed', flat=True)
     posts = Post.objects.all().order_by('-created_at')
-    return render(request, 'posts/home.html', {'posts': posts, 'followed_users': followed_users})
+    stories = Story.objects.all()  # Asegúrate de tener un modelo de historias
+    for story in stories:
+        if story.user.profile.avatar:
+            story.avatar_url = story.user.profile.avatar.url
+        else:
+            story.avatar_url = '/static/img/undraw_profile.svg'
+
+    return render(request, 'posts/home.html', {'posts': posts, 'followed_users': followed_users,'stories': stories})
 
 @login_required
 def create_post(request):
@@ -105,7 +115,15 @@ def login_view(request):
 
 def profile(request, username):
     posts = Post.objects.filter(user__username=username)
-    return render(request, 'accounts/profile.html', {'posts': posts})
+    user = User.objects.get(username=username)
+    followers_count = Follow.objects.filter(followed=user).count()
+    following_count = Follow.objects.filter(follower=user).count()
+    return render(request, 'accounts/profile.html', {
+        'user': user,
+        'posts': posts,
+        'followers_count': followers_count,
+        'following_count': following_count,
+    })
 
 
 @login_required
@@ -199,3 +217,60 @@ def add_comment(request, post_id):
     else:
         form = CommentForm()
     return render(request, 'posts/add_comment.html', {'form': form, 'post': post})
+
+@login_required
+def signout(request):
+    logout(request)
+    return redirect ('home')
+
+
+
+@login_required
+def edit_comment(request, post_id, comment_id):
+    post = get_object_or_404(Post, id=post_id)
+    comment = get_object_or_404(Comment, id=comment_id)
+    
+    if request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect('add_comment', post_id=post.id)  # Redirigir al detalle del post
+    else:
+        form = CommentForm(instance=comment)
+    
+    return render(request, 'comments/edit_comment.html', {'form': form, 'post': post, 'comment': comment})
+
+
+
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+
+    # Verificar que el usuario sea el propietario del comentario
+    if request.user == comment.user:
+        comment.delete()
+        return redirect('add_comment', post_id=comment.post.id)  # Redirige a la publicación del comentario
+    else:
+        return redirect('error')  # O muestra un mensaje de error
+
+
+@login_required
+def upload_story(request):
+    if request.method == 'POST':
+        form = StoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            story = form.save(commit=False)
+            story.user = request.user
+            story.expires_at = timezone.now() + timezone.timedelta(days=1)  # Expira en 24 horas
+            story.save()
+            return redirect('home')  # Redirige a la página principal o a donde quieras
+    else:
+        form = StoryForm()
+
+    return render(request, 'posts/upload_story.html', {'form': form})
+
+@login_required
+def view_stories(request):
+    # Filtra las historias que aún no han expirado
+    stories = Story.objects.filter(expires_at__gt=timezone.now()).order_by('-created_at')
+
+    return render(request, 'posts/view_stories.html', {'stories': stories})

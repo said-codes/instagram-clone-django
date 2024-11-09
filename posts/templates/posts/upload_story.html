@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-6 mx-auto">
+        <div class="card shadow-lg p-4">
+          <h4 class="text-center">Subir una Historia</h4>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <label for="image" class="form-label">Imagen/Video</label>
+              <input type="file" name="image" class="form-control" accept="image/*,video/*" required>
+            </div>
+            <div class="form-group mb-3">
+              <label for="caption" class="form-label">Pie de Foto (opcional)</label>
+              <textarea name="caption" class="form-control" rows="3" placeholder="Escribe algo..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Subir Historia</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block styles %}
+  <style>
+    .card {
+      background-color: #fff;
+      border-radius: 15px;
+    }
+    .form-label {
+      font-weight: 600;
+      color: #333;
+    }
+    .btn-primary {
+      background-color: #0095f6;
+      border: none;
+      font-weight: bold;
+    }
+    .btn-primary:hover {
+      background-color: #007bb5;
+    }
+  </style>
+{% endblock %}

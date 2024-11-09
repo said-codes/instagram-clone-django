@@ -1,24 +1,58 @@
-<!-- posts/home.html -->
 {% extends 'base.html' %}
 {% load static %}
 
 {% block content %}
+<div class="container mt-4  justify-content-center">
+  <!-- Carrusel de Historias -->
+  <div class="row">
+    <div class="col-md-4">
+      <h2 class="text-center">Historias</h2>
+      <div class="swiper-container">
+        <div class="swiper-wrapper">
+          {% for story in stories %}
+          <div class="swiper-slide">
+            <div class="story-card">
+              {% if story.image %}
+                <img src="{{ story.image.url }}" alt="Historia de {{ story.user.username }}" class="img-fluid">
+              {% else %}
+                <div class="story-placeholder">No hay imagen</div>
+              {% endif %}
+              <div class="story-user">
+                <img src="{{ story.avatar_url }}" alt="{{ story.user.username }}" class="rounded-circle" width="50" height="50">
+                <p class="text-center">{{ story.user.username }}</p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Controles del carrusel -->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+  </div>
 <div class="container mt-4">
   <div class="row">
     <div class="col-md-12 mx-auto">
       <h2 class="text-center">Feed de Publicaciones</h2>
 
+
+
+      <!-- Botones para Crear Publicación y Crear Historia -->
       <div class="text-center mb-3">
-        <a href="{% url 'create_post' %}" class="btn btn-success btn-lg">Crear Publicación</a>
+        <a href="{% url 'create_post' %}" class="btn btn-success btn-lg me-2">Crear Publicación</a>
+        <a href="{% url 'upload_story' %}" class="btn btn-outline-secondary btn-lg">Crear Historia</a>
       </div>
+
       {% for post in posts %}
       <div class="card mb-3">
         <div class="card-header d-flex align-items-center">
           {% if user.profile.avatar %}
           <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="rounded-circle" width="30" height="30">
           {% else %}
-          <img src="{% static 'img/undraw_profile.svg' %}" alt="Default Avatar" class="rounded-circle" width="30"
-            height="30">
+          <img src="{% static 'img/undraw_profile.svg' %}" alt="Default Avatar" class="rounded-circle" width="30" height="30">
           {% endif %}
           <strong class="ms-2">{{ post.user.username }}</strong>
 
@@ -30,7 +64,6 @@
           <a href="{% url 'follow_user' post.user.id %}" class="btn btn-success btn-sm ms-3">Seguir</a>
           {% endif %}
           {% endif %}
-
         </div>
 
         <!-- Imagen de la publicación -->
@@ -66,17 +99,44 @@
             <button type="submit" class="btn btn-primary btn-sm">Comentar</button>
           </form>
         </div>
+        
         <!-- Fecha de creación de la publicación -->
         <div class="card-footer text-muted">
           Publicado el {{ post.created_at|date:"d M Y H:i" }}
         </div>
       </div>
     </div>
- 
-{% empty %}
-<p class="text-center">No hay publicaciones disponibles en el feed.</p>
-{% endfor %}
+    {% empty %}
+    <p class="text-center">No hay publicaciones disponibles en el feed.</p>
+    {% endfor %}
+  </div>
 </div>
-</div>
-</div>
+
+<link href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" rel="stylesheet">
+
+<!-- Swiper.js JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<!-- Inicialización de Swiper.js -->
+<script>
+  const swiper = new Swiper('.swiper-container', {
+    slidesPerView: 3,  // Número de historias visibles a la vez
+    spaceBetween: 10,   // Espacio entre las historias
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      768: {
+        slidesPerView: 2, // En pantallas medianas (tablets)
+      },
+      480: {
+        slidesPerView: 1, // En pantallas pequeñas (móviles)
+      },
+    },
+  });
+</script>
 {% endblock %}

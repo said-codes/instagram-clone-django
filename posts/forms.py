@@ -2,6 +2,7 @@ from django import forms
 from .models import Post, Profile
 from django.contrib.auth.models import User
 from .models import Comment
+from .models import Story
 
 # Formulario para la creación de publicaciones
 class PostForm(forms.ModelForm):
@@ -53,3 +54,14 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'content': forms.TextInput(attrs={'placeholder': 'Añadir un comentario...'})
         }
+
+
+class StoryForm(forms.ModelForm):
+    class Meta:
+        model = Story
+        fields = ['image', 'video', 'caption']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # Aquí puedes agregar validaciones para asegurarte de que se suban solo imágenes o videos
+        return cleaned_data

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.utils import timezone
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Publicación del usuario
@@ -54,3 +55,19 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.user.username} on {self.post.id}"
+
+
+
+class Story(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Usuario propietario de la historia
+    image = models.ImageField(upload_to='stories/')  # Imagen de la historia
+    video = models.FileField(upload_to='stories/', blank=True, null=True)  # Video de la historia (opcional)
+    caption = models.CharField(max_length=255, blank=True, null=True)  # Pie de foto (opcional)
+    created_at = models.DateTimeField(auto_now_add=True)  # Fecha de creación
+    expires_at = models.DateTimeField()  # Fecha de expiración (generalmente 24 horas después de la creación)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.created_at}"
+
+    def is_expired(self):
+        return timezone.now() > self.expires_at

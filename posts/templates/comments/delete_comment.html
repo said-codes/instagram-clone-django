@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title">¿Estás seguro de eliminar este comentario?</h5>
+      <p class="text-muted">Una vez eliminado, no podrás recuperar este comentario.</p>
+      <form action="{% url 'delete_comment' comment.id %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100">Eliminar comentario</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
