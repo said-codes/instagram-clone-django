@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %} 
+
+{% block content %}
+<div class="container mt-5">
+  <!-- Post Card -->
+  <div class="card mx-auto" style="max-width: 600px;">
+    <!-- Post Header -->
+    <div class="card-header d-flex align-items-center">
+      {% if post.user.profile.avatar %}
+      <img src="{{ post.user.profile.avatar.url }}" alt="Avatar" class="rounded-circle" width="40" height="40">
+      {% else %}
+      <img src="{% static 'img/undraw_profile.svg' %}" alt="Default Avatar" class="rounded-circle" width="40" height="40">
+      {% endif %}
+      <strong class="ms-2">{{ post.user.username }}</strong>
+    </div>
+
+    <!-- Post Image -->
+    {% if post.image %}
+    <img src="{{ post.image.url }}" class="card-img-top" alt="Imagen de la publicación">
+    {% endif %}
+
+    <!-- Post Content -->
+    <div class="card-body">
+      <p class="card-text">{{ post.caption }}</p>
+      <p><strong>{{ post.like_count }} Me gusta</strong></p>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="card-footer">
+      <h5>Comentarios</h5>
+      <!-- Display Comments -->
+      {% for comment in post.comments.all %}
+      <div class="d-flex align-items-start mb-3">
+        {% if comment.user.profile.avatar %}
+        <img src="{{ comment.user.profile.avatar.url }}" alt="Avatar" class="rounded-circle" width="30" height="30">
+        {% else %}
+        <img src="{% static 'img/undraw_profile.svg' %}" alt="Default Avatar" class="rounded-circle" width="30" height="30">
+        {% endif %}
+        <div class="ms-2">
+          <strong>{{ comment.user.username }}</strong>
+          <p class="mb-1">{{ comment.content }}</p>
+          <small class="text-muted">{{ comment.created_at|date:"d M Y H:i" }}</small>
+        </div>
+      </div>
+      {% empty %}
+      <p class="text-muted">No hay comentarios aún. ¡Sé el primero en comentar!</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Add Comment Form -->
+  <div class="card mt-4 mx-auto" style="max-width: 600px;">
+    <div class="card-body">
+      <form action="{% url 'add_comment' post.id %}" method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          {{ form.content.label_tag }}
+          {{ form.content|add_class:"form-control" }}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Comentar</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

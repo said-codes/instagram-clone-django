@@ -7,7 +7,7 @@
   <div class="row">
     <div class="col-md-12 mx-auto">
       <h2 class="text-center">Feed de Publicaciones</h2>
-      
+
       <div class="text-center mb-3">
         <a href="{% url 'create_post' %}" class="btn btn-success btn-lg">Crear Publicación</a>
       </div>
@@ -15,27 +15,27 @@
       <div class="card mb-3">
         <div class="card-header d-flex align-items-center">
           {% if user.profile.avatar %}
-          <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="rounded-circle" width="30"
-              height="30">
+          <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="rounded-circle" width="30" height="30">
           {% else %}
-          <img src="{% static 'img/undraw_profile.svg' %}" alt="Default Avatar" class="rounded-circle"
-              width="30" height="30">
+          <img src="{% static 'img/undraw_profile.svg' %}" alt="Default Avatar" class="rounded-circle" width="30"
+            height="30">
           {% endif %}
           <strong class="ms-2">{{ post.user.username }}</strong>
-          
+
           <!-- Botón Seguir/Dejar de seguir -->
           {% if post.user != user %}
-            {% if user in post.user.followed.all %}
-              <a href="{% url 'unfollow' post.user.id %}" class="btn btn-danger btn-sm ms-3">Dejar de seguir</a>
-            {% else %}
-              <a href="{% url 'follow' post.user.id %}" class="btn btn-success btn-sm ms-3">Seguir</a>
-            {% endif %}
+          {% if post.user.id in followed_users %}
+          <a href="{% url 'unfollow_user' post.user.id %}" class="btn btn-danger btn-sm ms-3">Dejar de seguir</a>
+          {% else %}
+          <a href="{% url 'follow_user' post.user.id %}" class="btn btn-success btn-sm ms-3">Seguir</a>
           {% endif %}
+          {% endif %}
+
         </div>
 
         <!-- Imagen de la publicación -->
         {% if post.image %}
-          <img src="{{ post.image.url }}" class="card-img-top" alt="Imagen de la publicación">
+        <img src="{{ post.image.url }}" class="card-img-top" alt="Imagen de la publicación">
         {% endif %}
 
         <!-- Contenido de la publicación -->
@@ -49,16 +49,34 @@
             <a href="{% url 'unlike_post' post.id %}" class="btn btn-outline-danger">Quitar me gusta</a>
           </div>
         </div>
-
+        
+        <!-- Sección de Comentarios -->
+        <div class="card-body">
+          <h5>Comentarios</h5>
+          {% for comment in post.comments.all %}
+          <p><strong>{{ comment.user.username }}</strong>: {{ comment.content }}</p>
+          {% empty %}
+          <p class="text-muted">No hay comentarios. ¡Sé el primero en comentar!</p>
+          {% endfor %}
+  
+          <!-- Formulario para Añadir un Comentario -->
+          <form action="{% url 'add_comment' post.id %}" method="post" class="mt-2">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary btn-sm">Comentar</button>
+          </form>
+        </div>
         <!-- Fecha de creación de la publicación -->
         <div class="card-footer text-muted">
           Publicado el {{ post.created_at|date:"d M Y H:i" }}
         </div>
       </div>
-      {% empty %}
-      <p class="text-center">No hay publicaciones disponibles en el feed.</p>
-      {% endfor %}
     </div>
-  </div>
+ 
+{% empty %}
+<p class="text-center">No hay publicaciones disponibles en el feed.</p>
+{% endfor %}
+</div>
+</div>
 </div>
 {% endblock %}

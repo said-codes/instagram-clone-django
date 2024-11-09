@@ -17,7 +17,11 @@ urlpatterns = [
     path('<int:post_id>/', views.post_detail, name='post_detail'),
     path('accounts/settings/', views.profile_settings, name='settings'),
     path('accounts/delete/', views.delete_account, name='delete_account'),
-
-
-
+    path('follow/<int:user_id>/', views.follow_user, name='follow_user'),
+    path('unfollow/<int:user_id>/', views.unfollow_user, name='unfollow_user'),
+    path('post/<int:post_id>/comment/', views.add_comment, name='add_comment'),
 ]
+
+
+
+

@@ -10,6 +10,8 @@ from django.contrib.auth import logout
 from .forms import ProfileUpdateForm, UserUpdateForm
 from .forms import ProfileForm
 from .models import Profile
+from .models import Comment
+from .forms import CommentForm
 
 
 @login_required
@@ -17,7 +19,7 @@ def home(request):
     followed_users = Follow.objects.filter(
         follower=request.user).values_list('followed', flat=True)
     posts = Post.objects.all().order_by('-created_at')
-    return render(request, 'posts/home.html', {'posts': posts})
+    return render(request, 'posts/home.html', {'posts': posts, 'followed_users': followed_users})
 
 @login_required
 def create_post(request):
@@ -112,12 +114,6 @@ def post_detail(request, post_id):
     return render(request, 'posts/post_detail.html', {'post': post})
 
 
-# posts/views.py
-
-# posts/views.py
-
-# posts/views.py
-
 
 @login_required
 def profile_settings(request):
@@ -154,3 +150,52 @@ def delete_account(request):
         logout(request)
         return redirect('home')
     return render(request, 'posts/delete_account.html')
+
+
+
+@login_required
+def follow_user(request, user_id):
+    user_to_follow = get_object_or_404(User, id=user_id)
+    if user_to_follow != request.user:
+        Follow.objects.get_or_create(follower=request.user, followed=user_to_follow)
+        # Actualizar el conteo en los perfiles
+        profile = Profile.objects.get(user=user_to_follow)
+        profile.follower_count += 1
+        profile.save()
+
+        user_profile = Profile.objects.get(user=request.user)
+        user_profile.following_count += 1
+        user_profile.save()
+    return redirect('home', user_id=user_id)
+
+@login_required
+def unfollow_user(request, user_id):
+    user_to_unfollow = get_object_or_404(User, id=user_id)
+    follow = Follow.objects.filter(follower=request.user, followed=user_to_unfollow)
+    if follow.exists():
+        follow.delete()
+        # Actualizar el conteo en los perfiles
+        profile = Profile.objects.get(user=user_to_unfollow)
+        profile.follower_count -= 1
+        profile.save()
+
+        user_profile = Profile.objects.get(user=request.user)
+        user_profile.following_count -= 1
+        user_profile.save()
+    return redirect('home', user_id=user_id)
+
+
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.post = post
+            comment.save()
+            return redirect('home')  # Puedes redirigir a 'post_detail' si prefieres
+    else:
+        form = CommentForm()
+    return render(request, 'posts/add_comment.html', {'form': form, 'post': post})

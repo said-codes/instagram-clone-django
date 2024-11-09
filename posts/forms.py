@@ -1,6 +1,7 @@
 from django import forms
 from .models import Post, Profile
 from django.contrib.auth.models import User
+from .models import Comment
 
 # Formulario para la creación de publicaciones
 class PostForm(forms.ModelForm):
@@ -42,3 +43,13 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email']
+
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.TextInput(attrs={'placeholder': 'Añadir un comentario...'})
+        }

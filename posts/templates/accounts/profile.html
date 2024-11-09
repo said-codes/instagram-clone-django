@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 <div class="container">
   <!-- Sección de información del usuario -->
   <div class="row mt-4">
     <div class="col-md-3 text-center">
-      <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="rounded-circle" width="150" height="150">
+      {% if user.profile.avatar %}
+      <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="rounded-circle" width="50"
+          height="50">
+      {% else %}
+      <img src="{% static 'img/undraw_profile.svg' %}" alt="Default Avatar" class="rounded-circle"
+          width="30" height="30">
+      {% endif %}
     </div>
     <div class="col-md-9">
       <h2>{{ user.username }}</h2>
