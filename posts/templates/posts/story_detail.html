@@ -1,0 +1,22 @@
+<!-- story_detail.html -->
+
+{% load static %}
+
+{% block content %}
+<div class="story-detail-container text-center">
+    <div class="story-detail-content">
+        <img src="{{ story.image.url }}" alt="Historia de {{ story.user.username }}" class="img-fluid rounded">
+
+        <div class="story-user-info mt-3">
+            {% if story.user.profile.avatar %}
+            <img src="{{ story.user.profile.avatar.url }}" alt="{{ story.user.username }}" class="rounded-circle"
+                width="50" height="50">
+            {% else %}
+            <img src="{% static 'img/undraw_profile.svg' %}" alt="Default Avatar" class="rounded-circle" width="50"
+                height="50">
+            {% endif %}
+
+            <strong>{{ story.user.username }}</strong>
+        </div>
+
+{% endblock %}

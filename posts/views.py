@@ -274,3 +274,10 @@ def view_stories(request):
     stories = Story.objects.filter(expires_at__gt=timezone.now()).order_by('-created_at')
 
     return render(request, 'posts/view_stories.html', {'stories': stories})
+
+
+
+@login_required
+def story_detail(request, story_id):
+    story = get_object_or_404(Story, id=story_id)
+    return render(request, 'posts/story_detail.html', {'story': story})

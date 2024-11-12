@@ -11,20 +11,24 @@
         <div class="swiper-wrapper">
           {% for story in stories %}
           <div class="swiper-slide">
-            <div class="story-card">
-              {% if story.image %}
-                <img src="{{ story.image.url }}" alt="Historia de {{ story.user.username }}" class="img-fluid">
-              {% else %}
-                <div class="story-placeholder">No hay imagen</div>
-              {% endif %}
-              <div class="story-user">
-                <img src="{{ story.avatar_url }}" alt="{{ story.user.username }}" class="rounded-circle" width="50" height="50">
-                <p class="text-center">{{ story.user.username }}</p>
+            <!-- Enlace a la historia que abre el modal -->
+            <a href="{% url 'story_detail' story.id %}" class="story-link" data-story-id="{{ story.id }}">
+              <div class="story-card">
+                {% if story.image %}
+                  <img src="{{ story.image.url }}" alt="Historia de {{ story.user.username }}" class="img-fluid">
+                {% else %}
+                  <div class="story-placeholder">No hay imagen</div>
+                {% endif %}
+                <div class="story-user">
+                  <img src="{{ story.avatar_url }}" alt="{{ story.user.username }}" class="rounded-circle" width="50" height="50">
+                  <p class="text-center">{{ story.user.username }}</p>
+                </div>
               </div>
-            </div>
+            </a>
           </div>
           {% endfor %}
         </div>
+        
 
         <!-- Controles del carrusel -->
         <div class="swiper-button-next"></div>
@@ -112,6 +116,22 @@
   </div>
 </div>
 
+<!-- Modal para mostrar el detalle de la historia -->
+<div class="modal fade" id="storyModal" tabindex="-1" aria-labelledby="storyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="storyModalLabel">Historia de Usuario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="storyModalContent">
+        <!-- Aquí se cargará el contenido de la historia -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <link href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" rel="stylesheet">
 
 <!-- Swiper.js JS -->
@@ -139,4 +159,29 @@
     },
   });
 </script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const storyLinks = document.querySelectorAll('.story-link');
+    const storyModal = new bootstrap.Modal(document.getElementById('storyModal'));
+    const storyModalContent = document.getElementById('storyModalContent');
+
+    storyLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const storyUrl = link.getAttribute('href');
+
+        // Cargar el contenido de la historia en el modal
+        fetch(storyUrl)
+          .then(response => response.text())
+          .then(html => {
+            storyModalContent.innerHTML = html;
+            storyModal.show();
+          })
+          .catch(error => console.error('Error al cargar la historia:', error));
+      });
+    });
+  });
+</script>
+
 {% endblock %}
